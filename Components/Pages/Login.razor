@@ -1,5 +1,5 @@
 ﻿@page "/"
-@inject NavigationManager navigationManager;
+@inject NavigationManager navigationManager
 
 <PageTitle>Login</PageTitle>
 
@@ -9,46 +9,69 @@
     <form onsubmit="return false" class="form-container">
         <div class="form-group">
             <label for="username">Username:</label>
-            <input type="text" id="username" class="form-control" placeholder="Enter your username" />
+            <input type="text" id="username" class="form-control" placeholder="Enter your username" @bind="username" />
         </div>
 
         <div class="form-group">
             <label for="password">Password:</label>
-            <input type="password" id="password" class="form-control" placeholder="Enter your password" />
+            <input type="password" id="password" class="form-control" placeholder="Enter your password" @bind="password" />
         </div>
 
         <div class="form-group">
             <label for="currency">Currency:</label>
-            <select id="currency" class="form-control">
+            <select id="currency" class="form-control" @bind="selectedCurrency">
                 <option value="USD">USD - US Dollar</option>
                 <option value="EUR">EUR - Euro</option>
                 <option value="GBP">GBP - British Pound</option>
                 <option value="JPY">JPY - Japanese Yen</option>
                 <option value="AUD">AUD - Australian Dollar</option>
+                <option value="CAD">CAD - Canadian Dollar</option>
+                <option value="CHF">CHF - Swiss Franc</option>
+                <option value="CNY">CNY - Chinese Yuan</option>
+                <option value="INR">INR - Indian Rupee</option>
+                <option value="MXN">MXN - Mexican Peso</option>
+                <option value="BRL">BRL - Brazilian Real</option>
+                <option value="ZAR">ZAR - South African Rand</option>
+                <option value="SGD">SGD - Singapore Dollar</option>
+                <option value="MYR">MYR - Malaysian Ringgit</option>
+                <option value="HKD">HKD - Hong Kong Dollar</option>
+                <option value="NZD">NZD - New Zealand Dollar</option>
+                <option value="SEK">SEK - Swedish Krona</option>
+                <option value="NOK">NOK - Norwegian Krone</option>
+                <option value="DKK">DKK - Danish Krone</option>
+                <option value="PLN">PLN - Polish Zloty</option>
             </select>
         </div>
 
         <div class="form-group">
-            <button type="submit" @onclick="Home" class="btn btn-primary">Login</button>
+            <button type="submit" @onclick="HandleLogin" class="btn btn-primary">Login</button>
         </div>
 
-        <div id="error-message" class="error-message"></div>
+        <div id="error-message" class="error-message">@errorMessage</div>
     </form>
 </div>
 
 <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        color: #333;
+    }
+
     .login-container {
         max-width: 400px;
         margin: 50px auto;
         padding: 20px;
         border: 1px solid #ccc;
         border-radius: 8px;
+        background-color: #fff;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     h3 {
         text-align: center;
         margin-bottom: 20px;
+        color: #6f42c1; /* Purple color */
     }
 
     .form-container {
@@ -63,6 +86,7 @@
         .form-group label {
             display: block;
             margin-bottom: 5px;
+            color: #6f42c1; /* Purple color */
         }
 
     .form-control {
@@ -72,10 +96,15 @@
         border-radius: 4px;
     }
 
+        .form-control:focus {
+            border-color: #6f42c1; /* Focus border color in purple */
+            outline: none;
+        }
+
     .btn {
         width: 100%;
         padding: 10px;
-        background-color: #007bff;
+        background-color: #6f42c1; /* Purple background color */
         color: white;
         border: none;
         border-radius: 4px;
@@ -83,7 +112,7 @@
     }
 
         .btn:hover {
-            background-color: #0056b3;
+            background-color: #5a2c91; /* Darker purple on hover */
         }
 
     .error-message {
@@ -94,10 +123,25 @@
 </style>
 
 @code {
-        public void Home()
+    private string username;
+    private string password;
+    private string selectedCurrency = "USD";
+    private string errorMessage = "";
+
+    private void HandleLogin()
+    {
+        // Reset error message
+        errorMessage = "";
+
+        // Validate username and password
+        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
         {
-
-            navigationManager.NavigateTo("/home");
-
+            errorMessage = "Please enter both username and password.";
         }
+        else
+        {
+            // Navigate to home page if both fields are filled
+            navigationManager.NavigateTo("/home");
+        }
+    }
 }

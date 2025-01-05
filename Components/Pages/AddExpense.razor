@@ -5,22 +5,30 @@
 
 <PageTitle>Add Expense</PageTitle>
 
-<div class="add-expense-container">
-    <h1>Add New Expense</h1>
-    <EditForm Model="expense" OnValidSubmit="HandleSubmit" class="form-container">
-        <div class="form-group">
-            <label for="name">Expense Name:</label>
-            <input type="text" id="name" class="form-control" @bind="expense.Name" placeholder="Enter expense name" />
+<div style="margin: 50px auto; padding: 30px; max-width: 600px; background-color: #f7f3fc; border-radius: 10px; box-shadow: 0 4px 8px rgba(128, 0, 128, 0.2);">
+    <h1 style="text-align: center; color: #4a148c; margin-bottom: 20px; font-size: 1.8rem;">Add New Expense</h1>
+
+    @if (isSuccessVisible)
+    {
+        <div style="margin-bottom: 20px; padding: 15px; background-color: #e8f5e9; border: 1px solid #4caf50; border-radius: 6px; color: #388e3c; text-align: center; font-size: 1rem;">
+            Expense "<strong>@expense.Name</strong>" added successfully!
+        </div>
+    }
+
+    <EditForm Model="expense" OnValidSubmit="HandleSubmit" style="display: flex; flex-direction: column; gap: 15px;">
+        <div style="margin-bottom: 15px;">
+            <label for="name" style="display: block; margin-bottom: 8px; font-size: 1rem; color: #6a1b9a;">Expense Name:</label>
+            <input type="text" id="name" style="width: 100%; padding: 10px; font-size: 1rem; border: 1px solid #d1c4e9; border-radius: 6px; background-color: #fff;" @bind="expense.Name" placeholder="Enter expense name" />
         </div>
 
-        <div class="form-group">
-            <label for="description">Description:</label>
-            <textarea id="description" class="form-control" @bind="expense.Description" placeholder="Enter description"></textarea>
+        <div style="margin-bottom: 15px;">
+            <label for="description" style="display: block; margin-bottom: 8px; font-size: 1rem; color: #6a1b9a;">Description:</label>
+            <textarea id="description" style="width: 100%; padding: 10px; font-size: 1rem; border: 1px solid #d1c4e9; border-radius: 6px; background-color: #fff;" @bind="expense.Description" placeholder="Enter description"></textarea>
         </div>
 
-        <div class="form-group">
-            <label for="category">Category:</label>
-            <select id="category" class="form-control" @bind="expense.Type">
+        <div style="margin-bottom: 15px;">
+            <label for="category" style="display: block; margin-bottom: 8px; font-size: 1rem; color: #6a1b9a;">Category:</label>
+            <select id="category" style="width: 100%; padding: 10px; font-size: 1rem; border: 1px solid #d1c4e9; border-radius: 6px; background-color: #fff;" @bind="expense.Type">
                 <option value="">Select a category</option>
                 <option value="Food">Food</option>
                 <option value="Transport">Transport</option>
@@ -30,77 +38,22 @@
             </select>
         </div>
 
-        <div class="form-group">
-            <label for="amount">Amount:</label>
-            <input type="number" id="amount" class="form-control" @bind="expense.amount" placeholder="Enter amount" />
+        <div style="margin-bottom: 15px;">
+            <label for="amount" style="display: block; margin-bottom: 8px; font-size: 1rem; color: #6a1b9a;">Amount:</label>
+            <input type="number" id="amount" style="width: 100%; padding: 10px; font-size: 1rem; border: 1px solid #d1c4e9; border-radius: 6px; background-color: #fff;" @bind="expense.amount" placeholder="Enter amount" />
         </div>
 
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary">Add Expense</button>
+        <div style="margin-bottom: 15px;">
+            <button type="submit" style="width: 100%; padding: 12px; font-size: 1rem; font-weight: 600; color: white; background-color: #6a1b9a; border: none; border-radius: 6px; cursor: pointer; transition: background-color 0.3s;">Add Expense</button>
         </div>
 
-        <a href="/home" class="btn btn-secondary">Back</a>
-
+        <a href="/home" style="display: block; text-align: center; padding: 12px; font-size: 1rem; font-weight: 600; color: white; background-color: #9c27b0; text-decoration: none; border-radius: 6px; transition: background-color 0.3s;">Back</a>
     </EditForm>
 </div>
 
-<style>
-    .add-expense-container {
-        margin-left: 220px; /* Align with the NavMenu */
-        padding: 20px;
-        max-width: 600px;
-        margin-top: 50px;
-    }
-
-    h1 {
-        margin-bottom: 20px;
-    }
-
-    .form-container {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .form-group {
-        margin-bottom: 15px;
-    }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-    .form-control {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-
-    .btn {
-        padding: 10px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-        .btn:hover {
-            background-color: #0056b3;
-        }
-
-    .btn-secondary {
-        background-color: #6c757d;
-    }
-
-        .btn-secondary:hover {
-            background-color: #5a6268;
-        }
-</style>
-
 @code {
     private Expense expense = new Expense(); // Expense model to bind the form fields
+    private bool isSuccessVisible = false; // Tracks visibility of success message
 
     // Method to handle form submission
     private void HandleSubmit()
@@ -108,11 +61,13 @@
         // Add the expense using the ExpenseService
         ExpenseService.AddExpense(expense);
 
-        // Optionally, you can show a confirmation or navigate back
-        Console.WriteLine($"Added expense: {expense.Name}, Amount: {expense.amount}");
+        // Show success message
+        isSuccessVisible = true;
 
-        // Clear form after submission or navigate back
-        // You can navigate to another page if needed using NavigationManager
-        // For example: NavigationManager.NavigateTo("/home");
+        // Reset the form
+        expense = new Expense();
+
+        // Hide success message after a delay (optional)
+        _ = Task.Delay(3000).ContinueWith(_ => InvokeAsync(() => isSuccessVisible = false));
     }
 }

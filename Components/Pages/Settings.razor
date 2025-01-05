@@ -1,0 +1,82 @@
+﻿@page "/settings"
+@inject NavigationManager NavigationManager
+
+<PageTitle>Settings</PageTitle>
+
+<div style="margin: 50px auto; padding: 30px; max-width: 600px; background-color: #f7f3fc; border-radius: 10px; box-shadow: 0 4px 8px rgba(128, 0, 128, 0.2);">
+    <h1 style="text-align: center; color: #4a148c; margin-bottom: 20px; font-size: 1.8rem;">Settings</h1>
+    <EditForm Model="settings" OnValidSubmit="SaveSettings" style="display: flex; flex-direction: column; gap: 15px;">
+        <div style="margin-bottom: 15px;">
+            <label for="username" style="display: block; margin-bottom: 8px; font-size: 1rem; color: #6a1b9a;">Username:</label>
+            <input type="text" id="username" style="width: 100%; padding: 10px; font-size: 1rem; border: 1px solid #d1c4e9; border-radius: 6px; background-color: #fff;" @bind="settings.Username" placeholder="Enter your username" />
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="email" style="display: block; margin-bottom: 8px; font-size: 1rem; color: #6a1b9a;">Email:</label>
+            <input type="email" id="email" style="width: 100%; padding: 10px; font-size: 1rem; border: 1px solid #d1c4e9; border-radius: 6px; background-color: #fff;" @bind="settings.Email" placeholder="Enter your email" />
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="theme" style="display: block; margin-bottom: 8px; font-size: 1rem; color: #6a1b9a;">Theme:</label>
+            <select id="theme" style="width: 100%; padding: 10px; font-size: 1rem; border: 1px solid #d1c4e9; border-radius: 6px; background-color: #fff;" @bind="settings.Theme">
+                <option value="Light">Light</option>
+                <option value="Dark">Dark</option>
+                <option value="Custom">Custom</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <button type="submit" style="width: 100%; padding: 12px; font-size: 1rem; font-weight: 600; color: white; background-color: #6a1b9a; border: none; border-radius: 6px; cursor: pointer; transition: background-color 0.3s;">Save Settings</button>
+        </div>
+
+        <a href="/home" style="display: block; text-align: center; padding: 12px; font-size: 1rem; font-weight: 600; color: white; background-color: #9c27b0; text-decoration: none; border-radius: 6px; transition: background-color 0.3s;">Back</a>
+    </EditForm>
+
+    @if (isSuccessVisible)
+    {
+        <div style="margin-top: 20px; padding: 15px; background-color: #e8f5e9; border: 1px solid #4caf50; border-radius: 6px; color: #388e3c; text-align: center; font-size: 1rem;">
+            Settings saved successfully!
+        </div>
+    }
+</div>
+
+@code {
+    private UserSettings settings = new UserSettings(); // Model to bind the form
+    private bool isSuccessVisible = false; // Tracks visibility of success message
+
+    protected override void OnInitialized()
+    {
+        LoadSettings(); // Load existing settings
+    }
+
+    private void LoadSettings()
+    {
+        // Simulate loading settings from a service or database
+        settings = new UserSettings
+            {
+                Username = "",
+                Email = "",
+                Theme = "Light"
+            };
+    }
+
+    private void SaveSettings()
+    {
+        // Simulate saving settings to a service or database
+        Console.WriteLine($"Saved Settings: {settings.Username}, {settings.Email}, {settings.Theme}");
+
+        // Show success message
+        isSuccessVisible = true;
+
+        // Hide the message after a delay (optional)
+        _ = Task.Delay(3000).ContinueWith(_ => InvokeAsync(() => isSuccessVisible = false));
+    }
+
+    // Mock UserSettings class
+    public class UserSettings
+    {
+        public string Username { get; set; }
+        public string Email { get; set; }
+        public string Theme { get; set; }
+    }
+}

@@ -1,0 +1,118 @@
+﻿@page "/add-expense"
+@using coursework.Service
+@using coursework.Models
+@inject ExpenseService ExpenseService
+
+<PageTitle>Add Expense</PageTitle>
+
+<div class="add-expense-container">
+    <h1>Add New Expense</h1>
+    <EditForm Model="expense" OnValidSubmit="HandleSubmit" class="form-container">
+        <div class="form-group">
+            <label for="name">Expense Name:</label>
+            <input type="text" id="name" class="form-control" @bind="expense.Name" placeholder="Enter expense name" />
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" class="form-control" @bind="expense.Description" placeholder="Enter description"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Category:</label>
+            <select id="category" class="form-control" @bind="expense.Type">
+                <option value="">Select a category</option>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Utilities">Utilities</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" class="form-control" @bind="expense.amount" placeholder="Enter amount" />
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Add Expense</button>
+        </div>
+
+        <a href="/home" class="btn btn-secondary">Back</a>
+
+    </EditForm>
+</div>
+
+<style>
+    .add-expense-container {
+        margin-left: 220px; /* Align with the NavMenu */
+        padding: 20px;
+        max-width: 600px;
+        margin-top: 50px;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+    }
+
+    .form-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .btn {
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+    .btn-secondary {
+        background-color: #6c757d;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+</style>
+
+@code {
+    private Expense expense = new Expense(); // Expense model to bind the form fields
+
+    // Method to handle form submission
+    private void HandleSubmit()
+    {
+        // Add the expense using the ExpenseService
+        ExpenseService.AddExpense(expense);
+
+        // Optionally, you can show a confirmation or navigate back
+        Console.WriteLine($"Added expense: {expense.Name}, Amount: {expense.amount}");
+
+        // Clear form after submission or navigate back
+        // You can navigate to another page if needed using NavigationManager
+        // For example: NavigationManager.NavigateTo("/home");
+    }
+}

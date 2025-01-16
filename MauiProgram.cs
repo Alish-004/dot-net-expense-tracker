@@ -1,5 +1,7 @@
-﻿using coursework.Service;
+﻿using coursework.Models;
+using coursework.Service;
 using Microsoft.Extensions.Logging;
+using MudBlazor.Services;
 
 namespace coursework
 {
@@ -16,10 +18,12 @@ namespace coursework
                 });
 
             builder.Services.AddMauiBlazorWebView();
-            builder.Services.AddSingleton<ExpenseService>();
-            ExpenseService expenseService  = new ExpenseService();
+            builder.Services.AddSingleton<UserService>();
+            builder.Services.AddScoped<UserData>();
+            builder.Services.AddMudServices();
+
 #if DEBUG
-    		builder.Services.AddBlazorWebViewDeveloperTools();
+            builder.Services.AddBlazorWebViewDeveloperTools();
     		builder.Logging.AddDebug();
 #endif
 

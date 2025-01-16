@@ -10,7 +10,7 @@ namespace coursework.Models
     {
 
        public int ID { get; set; }
-       public String Name { get; set; }
+       public String UserName { get; set; }
 
       public  String Password { get; set; }
 
@@ -18,7 +18,11 @@ namespace coursework.Models
 
       public  String ContactNumber { get; set; }
 
-        public List<Expense> Expenses { get; set; }
+       public List<Transaction> Transactions { get; set; }
+
+       public int AvailableBalance { get; set; }
+
+        public List<string> Tags { get; set; }
 
     }
 }

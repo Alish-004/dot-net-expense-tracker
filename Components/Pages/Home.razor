@@ -3,16 +3,56 @@
 <PageTitle>Home</PageTitle>
 
 <NavMenu></NavMenu>
+
 <div class="home-container">
-    <!-- Image at the top -->
-    <img src="https://www.moneypatrol.com/moneytalk/wp-content/uploads/2023/07/budget509.png" alt="Expense Tracker" class="home-image" />
+    <!-- Welcome Section -->
+    <div class="welcome">
+        <h1>Welcome Back, Admin!</h1>
+        <p>Track your spending, set your goals, and achieve financial freedom!</p>
+    </div>
 
-    <h1>Welcome Home ADMIN</h1>
-    <p>"Take Control, Track Your Spending, Achieve Your Financial Goals."</p>
+    <!-- Stats Overview -->
+    <div class="stats-container">
+        <div class="stat-box">
+            <h3>Total Expenses</h3>
+            <p>$0.00</p>
+        </div>
+        <div class="stat-box">
+            <h3>Remaining Budget</h3>
+            <p>$0.00</p>
+        </div>
+    </div>
 
+    <!-- Financial Goals & Progress -->
+    <div class="goal-progress">
+        <h2>Your Financial Goal</h2>
+        <p>Goal: $500 savings this month</p>
+        <div class="progress-bar">
+            <div class="progress" style="width: 30%;"></div>
+        </div>
+        <p>Progress: $150 saved</p>
+    </div>
+
+    <!-- Motivational Section -->
+    <div class="motivational">
+        <h2>Stay on Track!</h2>
+        <p>Tracking your expenses is the first step towards financial freedom. Make budgeting a habit, and you'll see progress!</p>
+    </div>
+
+    <!-- Main Actions -->
     <div class="home-actions">
         <a href="/add-expense" class="btn btn-primary">Add Expense</a>
         <a href="/view-expenses" class="btn btn-secondary">View Expenses</a>
+    </div>
+
+    <!-- Quick Tips Section -->
+    <div class="quick-tips">
+        <h3>Quick Tips</h3>
+        <ul>
+            <li>Review your spending weekly.</li>
+            <li>Set a savings target each month.</li>
+            <li>Track all expenses, big or small.</li>
+        </ul>
     </div>
 </div>
 
@@ -25,7 +65,7 @@
     body, html {
         margin: 0;
         padding: 0;
-        height: 100%; /* Set full height for the body and html */
+        height: 100%;
     }
 
     body {
@@ -33,34 +73,29 @@
         background-color: #f4f4f9;
         color: #333;
         display: flex;
-        flex-direction: column; /* Stack elements vertically */
-        min-height: 100vh; /* Full viewport height */
+        flex-direction: column;
+        min-height: 100vh;
     }
 
     .home-container {
-        max-width: 800px;
+        max-width: 900px;
         margin: 50px auto;
         text-align: center;
         padding: 20px;
         background-color: #fff;
         border-radius: 8px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        flex: 1; /* Ensures the content area takes available space */
+        flex: 1;
     }
 
-    /* Style for the image */
-    .home-image {
-        width: 100%; /* Makes the image responsive */
-        max-width: 800px; /* Set a maximum width */
-        height: auto; /* Maintain aspect ratio */
-        border-radius: 8px;
-        margin-bottom: 20px;
+    .welcome {
+        margin-bottom: 30px;
     }
 
     .home-container h1 {
         font-size: 2.5em;
-        margin-bottom: 20px;
-        color: #5e2a8c; /* Purple color */
+        margin-bottom: 10px;
+        color: #5e2a8c;
     }
 
     .home-container p {
@@ -68,6 +103,69 @@
         margin-bottom: 30px;
         color: #555;
     }
+
+    .stats-container {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 40px;
+    }
+
+    .stat-box {
+        background-color: #6f42c1;
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        width: 45%;
+    }
+
+        .stat-box h3 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        .stat-box p {
+            font-size: 1.8em;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+    .goal-progress {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 40px;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 20px;
+        background-color: #ddd;
+        border-radius: 10px;
+        margin: 10px 0;
+    }
+
+    .progress {
+        height: 100%;
+        background-color: #6f42c1;
+        border-radius: 10px;
+    }
+
+    .motivational {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 40px;
+    }
+
+        .motivational h2 {
+            color: #6f42c1;
+            margin-bottom: 10px;
+        }
+
+        .motivational p {
+            font-size: 1.1em;
+            color: #555;
+        }
 
     .home-actions {
         display: flex;
@@ -81,18 +179,18 @@
         text-decoration: none;
         border-radius: 4px;
         cursor: pointer;
-        transition: background-color 0.3s, transform 0.3s; /* Add transition for smooth hover effect */
+        transition: background-color 0.3s, transform 0.3s;
     }
 
     .btn-primary {
-        background-color: #6f42c1; /* Purple color */
+        background-color: #6f42c1;
         color: white;
         border: none;
     }
 
         .btn-primary:hover {
-            background-color: #5a2c91; /* Darker purple */
-            transform: scale(1.05); /* Slightly enlarge the button */
+            background-color: #5a2c91;
+            transform: scale(1.05);
         }
 
     .btn-secondary {
@@ -103,39 +201,36 @@
 
         .btn-secondary:hover {
             background-color: #5a2c91;
-            transform: scale(1.05); /* Slightly enlarge the button */
+            transform: scale(1.05);
         }
 
-    .home-info, .home-benefits {
-        margin-top: 40px;
-        text-align: left;
+    .quick-tips {
         background-color: #f9f9f9;
         padding: 20px;
         border-radius: 8px;
     }
 
-        .home-info h2, .home-benefits h2 {
+        .quick-tips h3 {
             color: #6f42c1;
-            margin-bottom: 10px;
         }
 
-        .home-info ul, .home-benefits ul {
-            list-style-type: none;
+        .quick-tips ul {
+            list-style: none;
             padding: 0;
+            color: #555;
         }
 
-        .home-info li, .home-benefits li {
-            font-size: 1.1em;
-            color: #555;
-            margin-bottom: 10px;
-        }
+            .quick-tips ul li {
+                font-size: 1.1em;
+                margin: 10px 0;
+            }
 
     .footer {
         text-align: center;
         padding: 20px;
         background-color: #6f42c1;
         color: white;
-        margin-top: auto; /* Push the footer to the bottom of the page */
+        margin-top: auto;
     }
 </style>
 

@@ -1,128 +1,46 @@
 ﻿@page "/"
 @inject NavigationManager navigationManager
-
+@inject coursework.Service.UserService userService
 <PageTitle>Login</PageTitle>
 
-<div class="login-container">
-    <h3>Login</h3>
+<MudContainer MaxWidth="MaxWidth.Small">
+    <MudPaper Class="login-paper" Elevation="4">
+        <MudText Align="Align.Center" Variant="Variant.H4" Color="Color.Primary">Welcome to you Expense Tracker</MudText>
 
-    <form onsubmit="return false" class="form-container">
-        <div class="form-group">
-            <label for="username">Username:</label>
-            <input type="text" id="username" class="form-control" placeholder="Enter your username" @bind="username" />
-        </div>
+        <MudForm @onsubmit="HandleLogin">
+            <MudTextField T="string" Label="Username" Variant="Variant.Filled" @bind-Value="username" FullWidth Margin="Margin.Normal" />
+            <MudTextField T="string" Label="Password" Variant="Variant.Filled" @bind-Value="password" InputType="InputType.Password" FullWidth Margin="Margin.Normal" />
 
-        <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" id="password" class="form-control" placeholder="Enter your password" @bind="password" />
-        </div>
+            <MudButton OnClick="HandleLogin" Color="Color.Primary" FullWidth Class="mt-4">Login</MudButton>
 
-        <div class="form-group">
-            <label for="currency">Currency:</label>
-            <select id="currency" class="form-control" @bind="selectedCurrency">
-                <option value="USD">USD - US Dollar</option>
-                <option value="EUR">EUR - Euro</option>
-                <option value="GBP">GBP - British Pound</option>
-                <option value="JPY">JPY - Japanese Yen</option>
-                <option value="AUD">AUD - Australian Dollar</option>
-                <option value="CAD">CAD - Canadian Dollar</option>
-                <option value="CHF">CHF - Swiss Franc</option>
-                <option value="CNY">CNY - Chinese Yuan</option>
-                <option value="INR">INR - Indian Rupee</option>
-                <option value="MXN">MXN - Mexican Peso</option>
-                <option value="BRL">BRL - Brazilian Real</option>
-                <option value="ZAR">ZAR - South African Rand</option>
-                <option value="SGD">SGD - Singapore Dollar</option>
-                <option value="MYR">MYR - Malaysian Ringgit</option>
-                <option value="HKD">HKD - Hong Kong Dollar</option>
-                <option value="NZD">NZD - New Zealand Dollar</option>
-                <option value="SEK">SEK - Swedish Krona</option>
-                <option value="NOK">NOK - Norwegian Krone</option>
-                <option value="DKK">DKK - Danish Krone</option>
-                <option value="PLN">PLN - Polish Zloty</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <button type="submit" @onclick="HandleLogin" class="btn btn-primary">Login</button>
-        </div>
-
-        <div id="error-message" class="error-message">@errorMessage</div>
-    </form>
-</div>
+            <MudText Class="error-message" Color="Color.Error" Align="Align.Center">@errorMessage</MudText>
+        </MudForm>
+    </MudPaper>
+</MudContainer>
 
 <style>
     body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f9;
-        color: #333;
-    }
-
-    .login-container {
-        max-width: 400px;
-        margin: 50px auto;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        background-color: #fff;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    h3 {
-        text-align: center;
-        margin-bottom: 20px;
-        color: #6f42c1; /* Purple color */
-    }
-
-    .form-container {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .form-group {
-        margin-bottom: 15px;
-    }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #6f42c1; /* Purple color */
-        }
-
-    .form-control {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-
-        .form-control:focus {
-            border-color: #6f42c1; /* Focus border color in purple */
-            outline: none;
-        }
-
-    .btn {
-        width: 100%;
-        padding: 10px;
-        background-color: #6f42c1; /* Purple background color */
+        font-family: 'Roboto', sans-serif;
+        background: url('https://images.unsplash.com/photo-1505471520514-3d0706193f02') no-repeat center center fixed;
+        background-size: cover;
         color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
     }
 
-        .btn:hover {
-            background-color: #5a2c91; /* Darker purple on hover */
-        }
+    .login-paper {
+        padding: 40px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 8px;
+    }
 
     .error-message {
-        color: red;
-        text-align: center;
         margin-top: 10px;
+        font-size: 14px;
+        color: red;
     }
 </style>
 
 @code {
+   
     private string username;
     private string password;
     private string selectedCurrency = "USD";
@@ -137,10 +55,19 @@
         if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
         {
             errorMessage = "Please enter both username and password.";
+            return;
+        }
+
+        // Attempt to login using the UserService
+        var user = userService.Login(username, password);
+
+        if (user == null)
+        {
+            errorMessage = "Invalid username or password.";
         }
         else
         {
-            // Navigate to home page if both fields are filled
+            // Login successful, navigate to home page
             navigationManager.NavigateTo("/home");
         }
     }

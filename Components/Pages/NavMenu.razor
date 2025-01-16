@@ -1,11 +1,23 @@
-﻿<div class="nav-menu">
-    <ul>
-        <li><a href="/home">Home</a></li>
-        <li><a href="/add-expense">Add Expense</a></li>
-        <li><a href="/view-expenses">View Expenses</a></li>
-        <li><a href="/settings">Settings</a></li>
-    </ul>
-</div>
+﻿@using MudBlazor
+
+<MudNavMenu Elevation="2" Class="nav-menu">
+    <MudNavLink Href="/home" Icon="@Icons.Material.Filled.Home">
+        <span class="nav-text">Home</span>
+    </MudNavLink>
+    <MudNavLink Href="/add-expense" Icon="@Icons.Material.Filled.AddCircle">
+        <span class="nav-text">Add Expense</span>
+    </MudNavLink>
+    <MudNavLink Href="/view-expenses" Icon="@Icons.Material.Filled.ListAlt">
+        <span class="nav-text">View Expenses</span>
+    </MudNavLink>
+    <MudNavLink Href="/settings" Icon="@Icons.Material.Filled.Settings">
+        <span class="nav-text">Settings</span>
+    </MudNavLink>
+
+    <MudNavLink Href="/" Icon="@Icons.Material.Filled.Settings">
+        <span class="nav-text">Logout</span>
+    </MudNavLink>
+</MudNavMenu>
 
 <style>
     .nav-menu {
@@ -14,29 +26,35 @@
         left: 0;
         width: 200px;
         height: 100%;
-        background-color: #6f42c1; /* Purple background */
+        background-color: #000000; /* Black background */
         color: white;
         padding: 20px 0;
         box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     }
 
-        .nav-menu ul {
-            list-style: none;
-            padding: 0;
+    .mud-nav-link {
+        color: white;
+        font-size: 1.1em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+    }
+
+        .mud-nav-link .mud-icon-button {
+            font-size: 1.5em;
         }
 
-            .nav-menu ul li {
-                margin: 15px 0;
-                text-align: center;
-            }
+    .nav-text {
+        margin-left: 10px;
+    }
 
-                .nav-menu ul li a {
-                    color: white; /* White text */
-                    text-decoration: none;
-                    font-size: 1.1em;
-                }
+    .mud-nav-link:hover {
+        text-decoration: underline;
+        background-color: rgba(255, 255, 255, 0.1); /* Light background on hover */
+    }
 
-                    .nav-menu ul li a:hover {
-                        text-decoration: underline; /* Underline on hover */
-                    }
+        .mud-nav-link:hover .mud-icon-button {
+            background-color: rgba(255, 255, 255, 0.1); /* Icon hover effect */
+        }
 </style>

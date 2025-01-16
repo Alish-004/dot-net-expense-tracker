@@ -1,73 +1,148 @@
 ﻿@page "/add-expense"
-@using coursework.Service
 @using coursework.Models
-@inject ExpenseService ExpenseService
+@using coursework.Service
+@inject UserService UserService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
 
-<PageTitle>Add Expense</PageTitle>
+<NavMenu></NavMenu>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Balance Display -->
+            <div class="mb-4 text-center">
+                <h3 class="text-primary">Balance: <span class="fw-bold">@balance</span></h3>
+            </div>
 
-<div style="margin: 50px auto; padding: 30px; max-width: 600px; background-color: #f7f3fc; border-radius: 10px; box-shadow: 0 4px 8px rgba(128, 0, 128, 0.2);">
-    <h1 style="text-align: center; color: #4a148c; margin-bottom: 20px; font-size: 1.8rem;">Add New Expense</h1>
+            <!-- Add Expense Card -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Add Expense</h5>
+                </div>
+                <div class="card-body">
+                    <EditForm Model="@NewExpense" OnValidSubmit="@HandleAddExpense">
+                        <div class="mb-3">
+                            <label for="description" class="form-label fw-bold">Description</label>
+                            <InputText id="description" class="form-control" @bind-Value="NewExpense.Description" />
+                        </div>
 
-    @if (isSuccessVisible)
-    {
-        <div style="margin-bottom: 20px; padding: 15px; background-color: #e8f5e9; border: 1px solid #4caf50; border-radius: 6px; color: #388e3c; text-align: center; font-size: 1rem;">
-            Expense "<strong>@expense.Name</strong>" added successfully!
+                        <div class="mb-3">
+                            <label for="date" class="form-label fw-bold">Date</label>
+                            <InputDate id="date" class="form-control" @bind-Value="NewExpense.Date" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="amount" class="form-label fw-bold">Amount</label>
+                            <InputNumber id="amount" class="form-control" @bind-Value="NewExpense.Amount" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="expense-tag" class="form-label fw-bold">Tag</label>
+                            <InputSelect id="expense-tag" class="form-select" @bind-Value="NewExpense.ExpenseTag">
+                                <option value="" disabled>Select a tag</option>
+                                @foreach (var tag in Tags)
+                                {
+                                    <option value="@tag">@tag</option>
+                                }
+                            </InputSelect>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="expense-type" class="form-label fw-bold">Expense Type</label>
+                            <InputSelect id="expense-type" class="form-select" @bind-Value="NewExpense.TransactionType">
+                                <option value="">Choose below</option>
+                                <option value="Credit">Credit</option>
+                                <option value="Debit">Debit</option>
+                            </InputSelect>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Add Expense</button>
+                    </EditForm>
+                </div>
+            </div>
+
+            <!-- Add Custom Tag Card -->
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0">Add a Custom Tag</h6>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <InputText id="new-tag" class="form-control" @bind-Value="NewTag" placeholder="Enter tag" />
+                        <button class="btn btn-success" @onclick="HandleAddTag">Add Tag</button>
+                    </div>
+                </div>
+            </div>
         </div>
-    }
-
-    <EditForm Model="expense" OnValidSubmit="HandleSubmit" style="display: flex; flex-direction: column; gap: 15px;">
-        <div style="margin-bottom: 15px;">
-            <label for="name" style="display: block; margin-bottom: 8px; font-size: 1rem; color: #6a1b9a;">Expense Name:</label>
-            <input type="text" id="name" style="width: 100%; padding: 10px; font-size: 1rem; border: 1px solid #d1c4e9; border-radius: 6px; background-color: #fff;" @bind="expense.Name" placeholder="Enter expense name" />
-        </div>
-
-        <div style="margin-bottom: 15px;">
-            <label for="description" style="display: block; margin-bottom: 8px; font-size: 1rem; color: #6a1b9a;">Description:</label>
-            <textarea id="description" style="width: 100%; padding: 10px; font-size: 1rem; border: 1px solid #d1c4e9; border-radius: 6px; background-color: #fff;" @bind="expense.Description" placeholder="Enter description"></textarea>
-        </div>
-
-        <div style="margin-bottom: 15px;">
-            <label for="category" style="display: block; margin-bottom: 8px; font-size: 1rem; color: #6a1b9a;">Category:</label>
-            <select id="category" style="width: 100%; padding: 10px; font-size: 1rem; border: 1px solid #d1c4e9; border-radius: 6px; background-color: #fff;" @bind="expense.Type">
-                <option value="">Select a category</option>
-                <option value="Food">Food</option>
-                <option value="Transport">Transport</option>
-                <option value="Entertainment">Entertainment</option>
-                <option value="Utilities">Utilities</option>
-                <option value="Other">Other</option>
-            </select>
-        </div>
-
-        <div style="margin-bottom: 15px;">
-            <label for="amount" style="display: block; margin-bottom: 8px; font-size: 1rem; color: #6a1b9a;">Amount:</label>
-            <input type="number" id="amount" style="width: 100%; padding: 10px; font-size: 1rem; border: 1px solid #d1c4e9; border-radius: 6px; background-color: #fff;" @bind="expense.amount" placeholder="Enter amount" />
-        </div>
-
-        <div style="margin-bottom: 15px;">
-            <button type="submit" style="width: 100%; padding: 12px; font-size: 1rem; font-weight: 600; color: white; background-color: #6a1b9a; border: none; border-radius: 6px; cursor: pointer; transition: background-color 0.3s;">Add Expense</button>
-        </div>
-
-        <a href="/home" style="display: block; text-align: center; padding: 12px; font-size: 1rem; font-weight: 600; color: white; background-color: #9c27b0; text-decoration: none; border-radius: 6px; transition: background-color 0.3s;">Back</a>
-    </EditForm>
+    </div>
 </div>
 
 @code {
-    private Expense expense = new Expense(); // Expense model to bind the form fields
-    private bool isSuccessVisible = false; // Tracks visibility of success message
+    private Transaction NewExpense = new Transaction();
+    private string balance = "0";
+    private List<string> Tags = new();
+    private string NewTag = string.Empty;
 
-    // Method to handle form submission
-    private void HandleSubmit()
+    protected override async Task OnInitializedAsync()
     {
-        // Add the expense using the ExpenseService
-        ExpenseService.AddExpense(expense);
+        var currentUser = UserService.GetCurrentUser();
+        if (currentUser != null)
+        {
+            balance = currentUser.AvailableBalance.ToString();
+            Tags = UserService.GetAllTags();
+        }
+    }
 
-        // Show success message
-        isSuccessVisible = true;
+    private async Task HandleAddExpense()
+    {
+        try
+        {
+            bool expenseAdded = UserService.AddExpenseForUser(NewExpense);
 
-        // Reset the form
-        expense = new Expense();
+            if (expenseAdded)
+            {
+                Snackbar.Add("Expense added successfully!", Severity.Success);
+                var currentUser = UserService.GetCurrentUser();
+                balance = currentUser?.AvailableBalance.ToString() ?? "0";
+                NewExpense = new Transaction();
+            }
+            else
+            {
+                Snackbar.Add("Insufficient balance to add the expense", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to add expense: {ex.Message}", Severity.Error);
+        }
+    }
 
-        // Hide success message after a delay (optional)
-        _ = Task.Delay(3000).ContinueWith(_ => InvokeAsync(() => isSuccessVisible = false));
+    private void HandleAddTag()
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(NewTag))
+            {
+                Snackbar.Add("Tag cannot be empty", Severity.Warning);
+                return;
+            }
+
+            var tagAdded = UserService.AddTagToUser(NewTag);
+
+            if (tagAdded)
+            {
+                Snackbar.Add("Tag added successfully!", Severity.Success);
+                Tags = UserService.GetAllTags();
+                NewTag = string.Empty;
+            }
+            else
+            {
+                Snackbar.Add("Tag already exists", Severity.Info);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to add tag: {ex.Message}", Severity.Error);
+        }
     }
 }

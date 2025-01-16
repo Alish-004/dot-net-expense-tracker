@@ -1,239 +1,163 @@
 ﻿@page "/home"
+@using coursework.Service
+@inject UserService UserService
 
 <PageTitle>Home</PageTitle>
 
 <NavMenu></NavMenu>
 
-<div class="home-container">
+<div class="container mt-4">
     <!-- Welcome Section -->
-    <div class="welcome">
-        <h1>Welcome Back, Admin!</h1>
-        <p>Track your spending, set your goals, and achieve financial freedom!</p>
+    <div class="text-center bg-light p-3 rounded shadow">
+        <h2 class="display-5 text-primary">Welcome Back, Admin!</h2>
+        <p class="lead">Track your spending, set your goals, and achieve financial freedom!</p>
     </div>
 
     <!-- Stats Overview -->
-    <div class="stats-container">
-        <div class="stat-box">
-            <h3>Total Expenses</h3>
-            <p>$0.00</p>
+    <div class="row mt-3 g-3">
+        <div class="col-6 col-md-3">
+            <div class="card text-center bg-primary text-white shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title">Total Expenses</h6>
+                    <p class="card-text h5">@currency o</p> <!-- Dynamically show total expenses -->
+                </div>
+            </div>
         </div>
-        <div class="stat-box">
-            <h3>Remaining Budget</h3>
-            <p>$0.00</p>
+        <div class="col-6 col-md-3">
+            <div class="card text-center bg-success text-white shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title">Remaining Budget</h6>
+                    <p class="card-text h5">@currency @remainingBalance</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center bg-info text-white shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title">Total Inflows</h6>
+                    <p class="card-text h5">@totalInflows</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center bg-danger text-white shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title">Total Outflows</h6>
+                    <p class="card-text h5">@totalOutflows</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add MudChart for Debts, Outflows, Inflows -->
+    <MudPaper Class="pa-4 mt-4">
+        <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" @bind-SelectedIndex="Index" InputData="@data" InputLabels="@labels"></MudChart>
+    </MudPaper>
+
+    
+    <!-- Selected Portion Display -->
+    <MudText Typo="Typo.h6">Selected portion of the chart: @Index</MudText>
+
+    <!-- Added Total Debts Section -->
+    <div class="row mt-3 g-3">
+        <div class="col-6 col-md-3">
+            <div class="card text-center bg-warning text-white shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title">Total Debts</h6>
+                    <p class="card-text h5">@totalDebts</p>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Financial Goals & Progress -->
-    <div class="goal-progress">
-        <h2>Your Financial Goal</h2>
-        <p>Goal: $500 savings this month</p>
-        <div class="progress-bar">
-            <div class="progress" style="width: 30%;"></div>
+    <div class="mt-4 p-3 bg-light rounded shadow-sm">
+        <h3 class="text-center text-secondary">Your Financial Goal</h3>
+        <p class="text-center">Goal: $500 savings this month</p>
+        <div class="progress" style="height: 25px;">
+            <div class="progress-bar bg-primary" style="width: 30%;">30%</div>
         </div>
-        <p>Progress: $150 saved</p>
+        <p class="text-center mt-2">Progress: $150 saved</p>
     </div>
 
     <!-- Motivational Section -->
-    <div class="motivational">
-        <h2>Stay on Track!</h2>
-        <p>Tracking your expenses is the first step towards financial freedom. Make budgeting a habit, and you'll see progress!</p>
+    <div class="mt-4 p-3 bg-secondary text-white rounded shadow-sm">
+        <h3 class="text-center">Stay on Track!</h3>
+        <p class="text-center">Tracking your expenses is the first step towards financial freedom. Make budgeting a habit, and you'll see progress!</p>
     </div>
 
     <!-- Main Actions -->
-    <div class="home-actions">
-        <a href="/add-expense" class="btn btn-primary">Add Expense</a>
-        <a href="/view-expenses" class="btn btn-secondary">View Expenses</a>
+    <div class="mt-4 text-center">
+        <a href="/add-expense" class="btn btn-primary btn-lg mx-1 shadow-sm">Add Expense</a>
+        <a href="/view-expenses" class="btn btn-secondary btn-lg mx-1 shadow-sm">View Expenses</a>
     </div>
 
     <!-- Quick Tips Section -->
-    <div class="quick-tips">
-        <h3>Quick Tips</h3>
-        <ul>
-            <li>Review your spending weekly.</li>
-            <li>Set a savings target each month.</li>
-            <li>Track all expenses, big or small.</li>
+    <div class="mt-4 p-3 bg-light rounded shadow-sm">
+        <h4 class="text-center text-primary">Quick Tips</h4>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Review your spending weekly.</li>
+            <li class="list-group-item">Set a savings target each month.</li>
+            <li class="list-group-item">Track all expenses, big or small.</li>
         </ul>
     </div>
 </div>
 
-<footer class="footer">
+<footer class="bg-primary text-white text-center py-2 mt-4">
     <p>&copy; 2025 Expense Tracker. All rights reserved.</p>
 </footer>
 
-<style>
-    /* Basic Reset */
-    body, html {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-    }
-
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f9;
-        color: #333;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-    }
-
-    .home-container {
-        max-width: 900px;
-        margin: 50px auto;
-        text-align: center;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        flex: 1;
-    }
-
-    .welcome {
-        margin-bottom: 30px;
-    }
-
-    .home-container h1 {
-        font-size: 2.5em;
-        margin-bottom: 10px;
-        color: #5e2a8c;
-    }
-
-    .home-container p {
-        font-size: 1.2em;
-        margin-bottom: 30px;
-        color: #555;
-    }
-
-    .stats-container {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 40px;
-    }
-
-    .stat-box {
-        background-color: #6f42c1;
-        color: white;
-        padding: 20px;
-        border-radius: 8px;
-        width: 45%;
-    }
-
-        .stat-box h3 {
-            margin: 0;
-            font-size: 1.5em;
-        }
-
-        .stat-box p {
-            font-size: 1.8em;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-    .goal-progress {
-        background-color: #f9f9f9;
-        padding: 20px;
-        border-radius: 8px;
-        margin-bottom: 40px;
-    }
-
-    .progress-bar {
-        width: 100%;
-        height: 20px;
-        background-color: #ddd;
-        border-radius: 10px;
-        margin: 10px 0;
-    }
-
-    .progress {
-        height: 100%;
-        background-color: #6f42c1;
-        border-radius: 10px;
-    }
-
-    .motivational {
-        background-color: #f9f9f9;
-        padding: 20px;
-        border-radius: 8px;
-        margin-bottom: 40px;
-    }
-
-        .motivational h2 {
-            color: #6f42c1;
-            margin-bottom: 10px;
-        }
-
-        .motivational p {
-            font-size: 1.1em;
-            color: #555;
-        }
-
-    .home-actions {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-    }
-
-    .btn {
-        padding: 10px 20px;
-        font-size: 1em;
-        text-decoration: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.3s;
-    }
-
-    .btn-primary {
-        background-color: #6f42c1;
-        color: white;
-        border: none;
-    }
-
-        .btn-primary:hover {
-            background-color: #5a2c91;
-            transform: scale(1.05);
-        }
-
-    .btn-secondary {
-        background-color: #6f42c1;
-        color: white;
-        border: none;
-    }
-
-        .btn-secondary:hover {
-            background-color: #5a2c91;
-            transform: scale(1.05);
-        }
-
-    .quick-tips {
-        background-color: #f9f9f9;
-        padding: 20px;
-        border-radius: 8px;
-    }
-
-        .quick-tips h3 {
-            color: #6f42c1;
-        }
-
-        .quick-tips ul {
-            list-style: none;
-            padding: 0;
-            color: #555;
-        }
-
-            .quick-tips ul li {
-                font-size: 1.1em;
-                margin: 10px 0;
-            }
-
-    .footer {
-        text-align: center;
-        padding: 20px;
-        background-color: #6f42c1;
-        color: white;
-        margin-top: auto;
-    }
-</style>
-
 @code {
-    // Home page logic can go here if needed
+    private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
+    private int dataSize = 3; // Initial data size is 3 (Debts, Inflows, Outflows)
+    public double[] data = { 500, 2000, 800 }; // Debts, Inflows, Outflows in this order
+    public string[] labels = { "Debts", "Inflows", "Outflows" };
+
+    Random random = new Random();
+
+    private string currency = "$";
+    private string remainingBalance = "1500.00";
+    private string totalInflows = "2000.00";
+    private string totalOutflows = "800.00";
+    private string totalDebts = "500.00"; // Added total debts property
+
+    void RandomizeData()
+    {
+        var new_data = new double[dataSize];
+        for (int i = 0; i < new_data.Length; i++)
+            new_data[i] = random.NextDouble() * 1000; // Randomize values
+        data = new_data;
+        StateHasChanged();
+    }
+
+    void AddDataSize()
+    {
+        if (dataSize < 20)
+        {
+            dataSize = dataSize + 1;
+            RandomizeData();
+        }
+    }
+
+    void RemoveDataSize()
+    {
+        if (dataSize > 0)
+        {
+            dataSize = dataSize - 1;
+            RandomizeData();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Set initial data for the chart from service or defaults
+        totalDebts = UserService.GetTotalNumberOfDebts().ToString("F2");
+        totalOutflows = UserService.GetTotalNumberOfOutflows().ToString("F2");
+        totalInflows = UserService.GetTotalNumberOfInflows().ToString("F2");
+        remainingBalance = UserService.GetRemaingBalance().ToString("F2");
+
+        // Initialize the chart data and labels
+        data = new double[] { Convert.ToDouble(totalDebts), Convert.ToDouble(totalInflows), Convert.ToDouble(totalOutflows) };
+        labels = new string[] { "Debts", "Inflows", "Outflows" };
+    }
 }

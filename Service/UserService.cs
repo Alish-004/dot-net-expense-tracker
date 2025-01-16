@@ -37,25 +37,25 @@ namespace coursework.Service
             {
                 var jsonData = File.ReadAllText(_expensesFilePath);
                 _users = JsonSerializer.Deserialize<List<User>>(jsonData) ?? new List<User>();
-                //foreach (var user in _users)
-                //{
-                //    if (user.Transactions == null)
-                //    {
-                //        user.Transactions = new List<Transaction>();
-                //    }
-                //    else if (user.Debts == null)
-                //    {
-                //        user.Debts = new List<Debt>();
-                //    }
-                //    else if (user.Tags == null)
-                //    {
+                foreach (var user in _users)
+                {
+                   if (user.Transactions == null)
+                  {
+                        user.Transactions = new List<Transaction>();
+                   }
+                   else if (user.Debts == null)
+                    {
+                        user.Debts = new List<Debt>();
+                    }
+                    else if (user.Tags == null)
+                    {
 
-                //        user.Tags = new List<String>();
-                //    }
-                //    {
+                        user.Tags = new List<String>();
+                    }
+                    {
 
-                //    }
-                //}
+                    }
+                }
 
                 {
 
@@ -76,16 +76,22 @@ namespace coursework.Service
         }
 
         // Authenticate the user and return user details if login is successful
-        public User? Login(string username, string password)
+        public User? Login(string username, string password,string selectedCurrency)
         {
             var user = _users.FirstOrDefault(u => u.UserName == username && u.Password == password);
             
             if (user != null)
             {
                 userData.GetUser = user;
+                Currency.CurrencyCode = selectedCurrency;
             }
 
             return user; // Return the user if authentication is successful, otherwise null
+        }
+
+        public string GetCurrency() { 
+        
+        return Currency.CurrencyCode;
         }
 
         // Get expenses for the currently logged-in user
@@ -190,86 +196,86 @@ namespace coursework.Service
             return true;
         }
 
-        //public List<Debt> GetAllDebtsForUser()
-        //{
-        //    var user = _userContext.CurrentUser;
-        //    return user?.Debts ?? new List<Debt>();
-        //}
+        public List<Debt> GetAllDebtsForUser()
+        {
+           var user = userData.GetUser;
+            return user?.Debts ?? new List<Debt>();
+        }
 
-        //public bool AddDebtForUser(Debt debt)
-        //{
-        //    var user = _userContext.CurrentUser;
+        public bool AddDebtForUser(Debt debt)
+        {
+           var user = userData.GetUser;
 
-        //    if (user == null)
-        //    {
-        //        throw new Exception("No user is logged in");
-        //    }
+            if (user == null)
+            {
+                throw new Exception("No user is logged in");
+            }
 
-        //    try
-        //    {
-        //        // Check for sufficient balance before adding the debt
-        //        if (user.TotalBalance < debt.Amount)
-        //        {
-        //            throw new Exception("Insufficient balance to add debt");
-        //        }
-        //        // Assign a unique ID to the debt using Guid for uniqueness across sessions
-        //        //debt.Id = user.Debts.Any() ? user.Debts.Max(d => d.Id) + 1 : 1;
-        //        // Add the debt to the user's list
-        //        List<Debt> debts = user.Debts;
-        //        Console.WriteLine(user.Debts);
-        //        user.Debts.Add(debt);
+            try
+            {
+                // Check for sufficient balance before adding the debt
+                if (user.AvailableBalance < debt.Amount)
+                {
+                    throw new Exception("Insufficient balance to add debt");
+                }
+                // Assign a unique ID to the debt using Guid for uniqueness across sessions
+                //debt.Id = user.Debts.Any() ? user.Debts.Max(d => d.Id) + 1 : 1;
+                // Add the debt to the user's list
+                List<Debt> debts = user.Debts;
+                Console.WriteLine(user.Debts);
+                user.Debts.Add(debt);
 
-        //        // Update the user's balance based on the debt amount
-        //        user.TotalBalance -= debt.Amount;
+                // Update the user's balance based on the debt amount
+                user.AvailableBalance -= debt.Amount;
 
-        //        // Persist the changes to the data storage
-        //        SaveUsersToJson(); // Ensure this persists data correctly
+                // Persist the changes to the data storage
+                SaveUsersToJson(); // Ensure this persists data correctly
 
-        //        return true; // Debt added successfully
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        // Log error for debugging and troubleshooting
-        //        // Ideally, use a logger here instead of Console.WriteLine
-        //        Console.WriteLine($"Error adding debt: {e.Message}");
-        //        return false;
-        //    }
-        //}
+                return true; // Debt added successfully
+            }
+            catch (Exception e)
+            {
+                // Log error for debugging and troubleshooting
+                // Ideally, use a logger here instead of Console.WriteLine
+                Console.WriteLine($"Error adding debt: {e.Message}");
+                return false;
+            }
+        }
 
-        //public bool MarkDebtAsPaid(int debtId)
-        //{
-        //    var user = userData.GetUser;
+        public bool MarkDebtAsPaid(int debtId)
+        {
+            var user = userData.GetUser;
 
-        //    if (user == null)
-        //    {
-        //        throw new Exception("No user is logged in");
-        //    }
+            if (user == null)
+            {
+                throw new Exception("No user is logged in");
+    }
 
-        //    var debt = user.Debts.FirstOrDefault(d => d.Id == debtId);
-        //    if (debt == null)
-        //    {
-        //        throw new Exception("Debt not found");
-        //    }
+    var debt = user.Debts.FirstOrDefault(d => d.Id == debtId);
+            if (debt == null)
+            {
+                throw new Exception("Debt not found");
+}
 
-        //    if (debt.Paid)
-        //    {
-        //        return false; // Debt is already marked as paid
-        //    }
+            if (debt.Paid)
+            {
+                return false; // Debt is already marked as paid
+            }
 
-        //    // Mark the debt as paid
-        //    debt.Paid = true;
+            // Mark the debt as paid
+            debt.Paid = true;
 
-        //    // Deduct the debt amount from the user's balance after clearing the debt
-        //    user.AvailableBalance -= debt.Amount;
+            // Deduct the debt amount from the user's balance after clearing the debt
+            user.AvailableBalance -= debt.Amount;
 
-        //    // Persist changes to the JSON file
-        //    SaveUsersToJson(); // Save the updated list of debts and user balance to JSON
+            // Persist changes to the JSON file
+            SaveUsersToJson(); // Save the updated list of debts and user balance to JSON
 
-        //    return true; // Debt successfully marked as paid
-        //}
+            return true; // Debt successfully marked as paid
+}
 
-        // Method to calculate total inflow (credit)
-        public double GetTotalInflow()
+//Method to calculate total inflow(credit)
+public double GetTotalInflow()
         {
             var user = userData.GetUser;
             if (user == null)
@@ -333,6 +339,17 @@ namespace coursework.Service
             }
 
             return user.Transactions.Sum(e => e.Amount); // Sum of both credits and debits
+        }
+
+        public int GetTotalNumberOfDebts()
+        {
+            var user = userData.GetUser;
+            if (user == null)
+            {
+                throw new Exception("No user is logged in");
+            }
+
+            return user.Debts.Count(); // Count the number of debts for the logged-in user
         }
     }
 

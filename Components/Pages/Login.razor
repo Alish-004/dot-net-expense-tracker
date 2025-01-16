@@ -5,11 +5,26 @@
 
 <MudContainer MaxWidth="MaxWidth.Small">
     <MudPaper Class="login-paper" Elevation="4">
-        <MudText Align="Align.Center" Variant="Variant.H4" Color="Color.Primary">Welcome to you Expense Tracker</MudText>
+        <MudText Align="Align.Center" Variant="Variant.H4" Color="Color.Primary">Welcome to your Expense Tracker</MudText>
 
         <MudForm @onsubmit="HandleLogin">
-            <MudTextField T="string" Label="Username" Variant="Variant.Filled" @bind-Value="username" FullWidth Margin="Margin.Normal" />
+
+            <MudTextField T="string" Label="Username" Variant="Variant.Filled" @bind-Value="username" InputType="InputType.Password" FullWidth Margin="Margin.Normal" />
+
+
             <MudTextField T="string" Label="Password" Variant="Variant.Filled" @bind-Value="password" InputType="InputType.Password" FullWidth Margin="Margin.Normal" />
+
+            <div style="margin: 16px 0; width: 100%;">
+                <label for="currency" style="display: block; margin-bottom: 8px; font-weight: bold; font-size: 14px;">Select Currency</label>
+                <select id="currency" name="currency" @bind="selectedCurrency" style="width: 100%; padding: 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; background-color: #f9f9f9;">
+                    <option value="">Select currency</option>
+                    <option value="USD">US Dollar (USD)</option>
+                    <option value="NPR">Nepalese Rupee (NPR)</option>
+                    <option value="INR">Indian Rupee (INR)</option>
+                    <option value="GBP">British Pound (GBP)</option>
+                    <option value="EUR">Euro (EUR)</option>
+                </select>
+            </div>
 
             <MudButton OnClick="HandleLogin" Color="Color.Primary" FullWidth Class="mt-4">Login</MudButton>
 
@@ -40,10 +55,9 @@
 </style>
 
 @code {
-   
     private string username;
     private string password;
-    private string selectedCurrency = "USD";
+    private string selectedCurrency = "USD"; // Default to USD
     private string errorMessage = "";
 
     private void HandleLogin()
@@ -59,7 +73,7 @@
         }
 
         // Attempt to login using the UserService
-        var user = userService.Login(username, password);
+        var user = userService.Login(username, password,selectedCurrency);
 
         if (user == null)
         {
@@ -67,6 +81,9 @@
         }
         else
         {
+            // Log the selected currency for user preferences or settings
+            Console.WriteLine($"Selected Currency: {selectedCurrency}");
+
             // Login successful, navigate to home page
             navigationManager.NavigateTo("/home");
         }

@@ -24,16 +24,28 @@
                         <div class="mb-3">
                             <label for="description" class="form-label fw-bold">Description</label>
                             <InputText id="description" class="form-control" @bind-Value="NewExpense.Description" />
+                            @if (string.IsNullOrWhiteSpace(NewExpense.Description))
+                            {
+                                <small class="text-danger">Description is required.</small>
+                            }
                         </div>
 
                         <div class="mb-3">
                             <label for="date" class="form-label fw-bold">Date</label>
                             <InputDate id="date" class="form-control" @bind-Value="NewExpense.Date" />
+                            @if (NewExpense.Date == default)
+                            {
+                                <small class="text-danger">A valid date is required.</small>
+                            }
                         </div>
 
                         <div class="mb-3">
                             <label for="amount" class="form-label fw-bold">Amount</label>
                             <InputNumber id="amount" class="form-control" @bind-Value="NewExpense.Amount" />
+                            @if (NewExpense.Amount <= 0)
+                            {
+                                <small class="text-danger">Amount must be greater than zero.</small>
+                            }
                         </div>
 
                         <div class="mb-3">
@@ -45,18 +57,26 @@
                                     <option value="@tag">@tag</option>
                                 }
                             </InputSelect>
+                            @if (string.IsNullOrWhiteSpace(NewExpense.ExpenseTag))
+                            {
+                                <small class="text-danger">Please select a tag.</small>
+                            }
                         </div>
 
                         <div class="mb-3">
                             <label for="expense-type" class="form-label fw-bold">Expense Type</label>
                             <InputSelect id="expense-type" class="form-select" @bind-Value="NewExpense.TransactionType">
-                                <option value="">Choose below</option>
+                                <option value="" disabled>Choose below</option>
                                 <option value="Credit">Credit</option>
                                 <option value="Debit">Debit</option>
                             </InputSelect>
+                            @if (string.IsNullOrWhiteSpace(NewExpense.TransactionType))
+                            {
+                                <small class="text-danger">Please select a transaction type.</small>
+                            }
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100">Add Expense</button>
+                        <button type="submit" class="btn btn-primary w-100" disabled="@IsInvalidForm">Add Expense</button>
                     </EditForm>
                 </div>
             </div>
@@ -71,6 +91,10 @@
                         <InputText id="new-tag" class="form-control" @bind-Value="NewTag" placeholder="Enter tag" />
                         <button class="btn btn-success" @onclick="HandleAddTag">Add Tag</button>
                     </div>
+                    @if (string.IsNullOrWhiteSpace(NewTag))
+                    {
+                        <small class="text-danger">Tag name cannot be empty.</small>
+                    }
                 </div>
             </div>
         </div>
@@ -95,6 +119,12 @@
 
     private async Task HandleAddExpense()
     {
+        if (IsInvalidForm)
+        {
+            Snackbar.Add("Please correct the highlighted errors before submitting.", Severity.Error);
+            return;
+        }
+
         try
         {
             bool expenseAdded = UserService.AddExpenseForUser(NewExpense);
@@ -119,14 +149,14 @@
 
     private void HandleAddTag()
     {
+        if (string.IsNullOrWhiteSpace(NewTag))
+        {
+            Snackbar.Add("Tag name cannot be empty", Severity.Warning);
+            return;
+        }
+
         try
         {
-            if (string.IsNullOrWhiteSpace(NewTag))
-            {
-                Snackbar.Add("Tag cannot be empty", Severity.Warning);
-                return;
-            }
-
             var tagAdded = UserService.AddTagToUser(NewTag);
 
             if (tagAdded)
@@ -145,4 +175,11 @@
             Snackbar.Add($"Failed to add tag: {ex.Message}", Severity.Error);
         }
     }
+
+    private bool IsInvalidForm =>
+        string.IsNullOrWhiteSpace(NewExpense.Description) ||
+        NewExpense.Date == default ||
+        NewExpense.Amount <= 0 ||
+        string.IsNullOrWhiteSpace(NewExpense.ExpenseTag) ||
+        string.IsNullOrWhiteSpace(NewExpense.TransactionType);
 }

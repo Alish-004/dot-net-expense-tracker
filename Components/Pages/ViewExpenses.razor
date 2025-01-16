@@ -7,10 +7,10 @@
 <div class="container my-4">
     <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="text-primary">Manage Expenses</h3>
-        <button class="btn btn-outline-primary" @onclick="NavigateToHome">
-            Back to Home
-        </button>
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-outline-primary" @onclick="NavigateToHome">Back to Home</button>
+        </div>
+        <h3 class="text-primary m-0 mx-auto">Manage Expenses</h3> <!-- Centered heading -->
     </div>
 
     <!-- Filters Section -->
@@ -23,7 +23,6 @@
             <button class="btn btn-outline-secondary" @onclick="ShowDebitExpenses">Cash Outflow</button>
             <button class="btn btn-outline-secondary" @onclick="ShowAllExpenses">All Expenses</button>
         </div>
-
 
         <!-- Filter by Date -->
         <div class="mb-3">
@@ -38,7 +37,18 @@
             </div>
         </div>
 
-        
+        <!-- Filter by Tags -->
+        <div class="mb-3">
+            <label class="form-label text-secondary">Filter by Tag</label>
+            <select class="form-select" @bind="selectedTag">
+                <option value="">Select Tag</option>
+                @foreach (var tag in availableTags)
+                {
+                    <option value="@tag">@tag</option>
+                }
+            </select>
+        </div>
+
         <!-- Apply and Clear Filters -->
         <div class="d-flex justify-content-start gap-2">
             <button class="btn btn-primary" @onclick="ApplyFilters">Apply</button>
@@ -46,9 +56,15 @@
         </div>
     </div>
 
-    <!-- Sort by Date Button -->
-    <div class="mb-4 text-end">
+    <!-- Sort and Filter by Amount Section -->
+    <div class="d-flex justify-content-between mb-4">
         <button class="btn btn-outline-secondary" @onclick="SortByDate">Sort by Date</button>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary" @onclick="ShowHighestCreditAmount">Highest Credit Amount</button>
+            <button class="btn btn-outline-secondary" @onclick="ShowLowestCreditAmount">Lowest Credit Amount</button>
+            <button class="btn btn-outline-secondary" @onclick="ShowHighestDebitAmount">Highest Debit Amount</button>
+            <button class="btn btn-outline-secondary" @onclick="ShowLowestDebitAmount">Lowest Debit Amount</button>
+        </div>
     </div>
 
     <!-- Expenses Table -->
@@ -87,16 +103,13 @@
             </tbody>
         </table>
     </div>
-
-    <!-- Back to Home Button at Bottom -->
-    <div class="text-center mt-4">
-        <button class="btn btn-outline-primary" @onclick="NavigateToHome">Back to Home</button>
-    </div>
 </div>
 
 @code {
     private List<Transaction> expenses = new List<Transaction>();
     private List<Transaction> filteredExpenses = new List<Transaction>();
+    private List<string> availableTags = new List<string>();
+    private string selectedTag;
 
     private decimal? minAmount;
     private decimal? maxAmount;
@@ -111,7 +124,26 @@
         try
         {
             expenses = UserService.GetUserExpenses();
-            filteredExpenses = expenses; // Initially display all expenses
+
+            if (expenses == null || expenses.Count == 0)
+            {
+                Console.WriteLine("No expenses data available.");
+                filteredExpenses = new List<Transaction>(); // Avoid null reference exception
+            }
+            else
+            {
+                filteredExpenses = expenses; // Initially display all expenses
+
+                // Retrieve unique tags from the expenses list (ensure no null values for tags)
+                availableTags = expenses
+                    .Where(e => !string.IsNullOrEmpty(e.ExpenseTag)) // Ensure non-null tags
+                    .Select(e => e.ExpenseTag)
+                    .Distinct()
+                    .ToList();
+
+                // Debugging: Print available tags
+                Console.WriteLine("Available Tags: " + string.Join(", ", availableTags));
+            }
         }
         catch (Exception ex)
         {
@@ -164,6 +196,12 @@
                 .Where(e => e.Description.Contains(descriptionFilter, StringComparison.OrdinalIgnoreCase))
                 .ToList();
         }
+
+        // Filter by selected tag
+        if (!string.IsNullOrEmpty(selectedTag))
+        {
+            filteredExpenses = filteredExpenses.Where(e => e.ExpenseTag.Equals(selectedTag, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
     }
 
     private void ClearFilters()
@@ -173,6 +211,7 @@
         startDate = null;
         endDate = null;
         descriptionFilter = null;
+        selectedTag = null;
         filteredExpenses = expenses;
     }
 
@@ -188,6 +227,42 @@
         }
 
         isDateAscending = !isDateAscending; // Toggle the sort order
+    }
+
+    // Show Highest Credit Amount
+    private void ShowHighestCreditAmount()
+    {
+        filteredExpenses = expenses.Where(e => e.TransactionType.Equals("credit", StringComparison.OrdinalIgnoreCase))
+                                   .OrderByDescending(e => e.Amount)
+                                   .Take(1)
+                                   .ToList();
+    }
+
+    // Show Lowest Credit Amount
+    private void ShowLowestCreditAmount()
+    {
+        filteredExpenses = expenses.Where(e => e.TransactionType.Equals("credit", StringComparison.OrdinalIgnoreCase))
+                                   .OrderBy(e => e.Amount)
+                                   .Take(1)
+                                   .ToList();
+    }
+
+    // Show Highest Debit Amount
+    private void ShowHighestDebitAmount()
+    {
+        filteredExpenses = expenses.Where(e => e.TransactionType.Equals("debit", StringComparison.OrdinalIgnoreCase))
+                                   .OrderByDescending(e => e.Amount)
+                                   .Take(1)
+                                   .ToList();
+    }
+
+    // Show Lowest Debit Amount
+    private void ShowLowestDebitAmount()
+    {
+        filteredExpenses = expenses.Where(e => e.TransactionType.Equals("debit", StringComparison.OrdinalIgnoreCase))
+                                   .OrderBy(e => e.Amount)
+                                   .Take(1)
+                                   .ToList();
     }
 
     private async Task NavigateToHome()

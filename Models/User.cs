@@ -24,5 +24,7 @@ namespace coursework.Models
 
         public List<string> Tags { get; set; }
 
+        public List<Debt> Debts { get; set; }
+
     }
 }

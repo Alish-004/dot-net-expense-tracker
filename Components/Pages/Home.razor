@@ -16,15 +16,16 @@
     <!-- Stats Overview -->
     <div class="row mt-3 g-3">
         <div class="col-6 col-md-3">
-            <div class="card text-center bg-primary text-white shadow-sm">
+            @* <div class="card text-center bg-light text-dark shadow-sm"> *@
+            <div class="card text-center" style="background-color: #D1A6FF; color: white; shadow-sm;">
                 <div class="card-body">
                     <h6 class="card-title">Total Expenses</h6>
-                    <p class="card-text h5">@currency @totalExpenses </p> <!-- Dynamically show total expenses -->
+                    <p class="card-text h5">@currency @totalExpenses</p> <!-- Dynamically show total expenses -->
                 </div>
             </div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="card text-center bg-success text-white shadow-sm">
+            <div class="card text-center" style="background-color: #D1A6FF; color: white; shadow-sm;">
                 <div class="card-body">
                     <h6 class="card-title">Remaining Budget</h6>
                     <p class="card-text h5">@currency @remainingBalance</p>
@@ -32,7 +33,7 @@
             </div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="card text-center bg-info text-white shadow-sm">
+            <div class="card text-center" style="background-color: #D1A6FF; color: white; shadow-sm;">
                 <div class="card-body">
                     <h6 class="card-title">Total Inflows</h6>
                     <p class="card-text h5">@totalInflows</p>
@@ -40,7 +41,7 @@
             </div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="card text-center bg-danger text-white shadow-sm">
+            <div class="card text-center" style="background-color: #D1A6FF; color: white; shadow-sm;">
                 <div class="card-body">
                     <h6 class="card-title">Total Outflows</h6>
                     <p class="card-text h5">@totalOutflows</p>
@@ -49,12 +50,29 @@
         </div>
     </div>
 
+    <!-- Debts Overview -->
     <div class="row mt-3 g-3">
-        <div class="col-6 col-md-3">
-            <div class="card text-center bg-warning text-white shadow-sm">
+        <div class="col-6 col-md-4">
+            <div class="card text-center" style="background-color: #D1A6FF; color: white; shadow-sm;">
                 <div class="card-body">
-                    <h6 class="card-title">Total Debts</h6>
-                    <p class="card-text h5">@totalDebts</p>
+                    <h6 class="card-title">Total Debts Count</h6>
+                    <p class="card-text h5">@totalDebtsCount</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <div class="card text-center" style="background-color: #D1A6FF; color: white; shadow-sm;">
+                <div class="card-body">
+                    <h6 class="card-title">Pending Debts</h6>
+                    <p class="card-text h5">@pendingDebtsCount</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <div class="card text-center" style="background-color: #D1A6FF; color: white; shadow-sm;">
+                <div class="card-body">
+                    <h6 class="card-title">Cleared Debts</h6>
+                    <p class="card-text h5">@clearedDebtsCount</p>
                 </div>
             </div>
         </div>
@@ -64,9 +82,6 @@
     <MudPaper Class="pa-4 mt-4">
         <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" @bind-SelectedIndex="Index" InputData="@data" InputLabels="@labels"></MudChart>
     </MudPaper>
-
-    <!-- Selected Portion Display -->
-    <MudText Typo="Typo.h6">Selected portion of the chart: @Index</MudText>
 
     <!-- Financial Goals & Progress -->
     <div class="mt-4 p-3 bg-light rounded shadow-sm">
@@ -80,12 +95,13 @@
 
     <!-- Main Actions -->
     <div class="mt-4 text-center">
-        <a href="/add-expense" class="btn btn-primary btn-lg mx-1 shadow-sm">Add Expense</a>
-        <a href="/view-expenses" class="btn btn-secondary btn-lg mx-1 shadow-sm">View Expenses</a>
+        <!-- Updated buttons with light purple color -->
+        <a href="/add-expense" class="btn" style="background-color: #D1A6FF; color: white; border-radius: 5px; padding: 15px 30px;">Add Expense</a>
+        <a href="/view-expenses" class="btn" style="background-color: #D1A6FF; color: white; border-radius: 5px; padding: 15px 30px;">View Expenses</a>
     </div>
 </div>
 
-<footer class="bg-primary text-white text-center py-2 mt-4">
+<footer class="bg-light text-dark text-center py-2 mt-4">
     <p>&copy; 2025 Expense Tracker. All rights reserved.</p>
 </footer>
 
@@ -103,6 +119,10 @@
     private string totalOutflows = "800.00";
     private string totalDebts = "500.00"; // Added total debts property
     private string totalExpenses;
+
+    private int totalDebtsCount;
+    private int pendingDebtsCount;
+    private int clearedDebtsCount;
 
     void RandomizeData()
     {
@@ -140,6 +160,11 @@
         remainingBalance = UserService.GetRemaingBalance().ToString("F2");
         totalExpenses = UserService.GetTotalExpenses().ToString();
         currency = UserService.GetCurrency();
+
+        // Initialize debt counts from service
+        totalDebtsCount = UserService.GetTotalNumberOfDebts();
+        pendingDebtsCount = UserService.GetPendingDebtsCount();
+        clearedDebtsCount = UserService.GetClearedDebtsCount();
 
         // Initialize the chart data and labels
         data = new double[] { Convert.ToDouble(totalDebts), Convert.ToDouble(totalInflows), Convert.ToDouble(totalOutflows) };

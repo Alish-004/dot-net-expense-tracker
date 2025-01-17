@@ -1,22 +1,21 @@
 ﻿@using MudBlazor
 
 <MudNavMenu Elevation="2" Class="nav-menu">
-    <MudNavLink Href="/home" Icon="@Icons.Material.Filled.Home">
+    <MudNavLink Href="/home" Icon="@Icons.Material.Filled.Home" Class="nav-link">
         <span class="nav-text">Home</span>
     </MudNavLink>
-    <MudNavLink Href="/add-expense" Icon="@Icons.Material.Filled.AddCircle">
+    <MudNavLink Href="/add-expense" Icon="@Icons.Material.Filled.AddCircle" Class="nav-link">
         <span class="nav-text">Add Expense</span>
     </MudNavLink>
-    <MudNavLink Href="/view-expenses" Icon="@Icons.Material.Filled.ListAlt">
+    <MudNavLink Href="/view-expenses" Icon="@Icons.Material.Filled.ListAlt" Class="nav-link">
         <span class="nav-text">View Expenses</span>
     </MudNavLink>
-    
 
-    <MudNavLink Href="/view-debts" Icon="@Icons.Material.Filled.AutoAwesome">
+    <MudNavLink Href="/view-debts" Icon="@Icons.Material.Filled.AutoAwesome" Class="nav-link">
         <span class="nav-text">Debts</span>
     </MudNavLink>
 
-    <MudNavLink Href="/" Icon="@Icons.Material.Filled.Logout">
+    <MudNavLink Href="/" Icon="@Icons.Material.Filled.Logout" Class="nav-link">
         <span class="nav-text">Logout</span>
     </MudNavLink>
 </MudNavMenu>
@@ -28,10 +27,10 @@
         left: 0;
         width: 200px;
         height: 100%;
-        background-color: #000000; /* Black background */
+        background-color: #4A148C; /* Deep purple background */
         color: white;
         padding: 20px 0;
-        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
     }
 
     .mud-nav-link {
@@ -41,6 +40,7 @@
         align-items: center;
         gap: 10px;
         padding: 10px;
+        border-radius: 5px;
     }
 
         .mud-nav-link .mud-icon-button {
@@ -51,12 +51,12 @@
         margin-left: 10px;
     }
 
-    .mud-nav-link:hover {
-        text-decoration: underline;
-        background-color: rgba(255, 255, 255, 0.1); /* Light background on hover */
+    .nav-link:hover {
+        background-color: white;
+        color: #4A148C; /* Deep purple text on hover */
     }
 
-        .mud-nav-link:hover .mud-icon-button {
-            background-color: rgba(255, 255, 255, 0.1); /* Icon hover effect */
+        .nav-link:hover .mud-icon-button {
+            background-color: white;
         }
 </style>

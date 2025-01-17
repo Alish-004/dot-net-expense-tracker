@@ -431,6 +431,31 @@ public double GetTotalInflow()
             return true; // Expense updated successfully
         }
 
+
+
+        public int GetPendingDebtsCount()
+        {
+            var user = userData.GetUser;
+            if (user == null)
+            {
+                throw new Exception("No user is logged in");
+            }
+
+            return user.Debts.Count(d => !d.Paid); // Count debts where Paid is false (pending debts)
+        }
+
+        // Method to get the count of cleared debts (debts where Paid == true)
+        public int GetClearedDebtsCount()
+        {
+            var user = userData.GetUser;
+            if (user == null)
+            {
+                throw new Exception("No user is logged in");
+            }
+
+            return user.Debts.Count(d => d.Paid); // Count debts where Paid is true (cleared debts)
+        }
+
     }
 
 }

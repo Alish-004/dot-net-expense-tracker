@@ -213,20 +213,16 @@ namespace coursework.Service
 
             try
             {
-                // Check for sufficient balance before adding the debt
-                if (user.AvailableBalance < debt.Amount)
-                {
-                    throw new Exception("Insufficient balance to add debt");
-                }
-                // Assign a unique ID to the debt using Guid for uniqueness across sessions
-                //debt.Id = user.Debts.Any() ? user.Debts.Max(d => d.Id) + 1 : 1;
+                
+                
+                
                 // Add the debt to the user's list
                 List<Debt> debts = user.Debts;
                 Console.WriteLine(user.Debts);
                 user.Debts.Add(debt);
 
                 // Update the user's balance based on the debt amount
-                user.AvailableBalance -= debt.Amount;
+                user.AvailableBalance += debt.Amount;
 
                 // Persist the changes to the data storage
                 SaveUsersToJson(); // Ensure this persists data correctly
@@ -266,7 +262,7 @@ namespace coursework.Service
             debt.Paid = true;
 
             // Deduct the debt amount from the user's balance after clearing the debt
-            user.AvailableBalance -= debt.Amount;
+            user.AvailableBalance += debt.Amount;
 
             // Persist changes to the JSON file
             SaveUsersToJson(); // Save the updated list of debts and user balance to JSON
@@ -351,6 +347,90 @@ public double GetTotalInflow()
 
             return user.Debts.Count(); // Count the number of debts for the logged-in user
         }
-    }
+
+
+        public bool AddNoteToExpense(int expenseId, string note)
+        {
+            var user = userData.GetUser;
+
+            if (user == null)
+            {
+                throw new Exception("No user is logged in");
+            }
+
+            // Find the transaction with the given ID
+            var expense = user.Transactions.FirstOrDefault(t => t.Id == expenseId);
+
+            if (expense == null)
+            {
+                throw new Exception("Expense not found");
+            }
+
+            // Set the note for the expense
+            expense.Note = note;
+
+            // Save the updated user data to JSON
+            SaveUsersToJson(); // Persist the updated transaction
+
+            return true; // Note successfully added
+        }
+
+
+        public bool UpdateExpense(Transaction updatedExpense)
+        {
+            var user = userData.GetUser;
+
+            if (user == null)
+            {
+                throw new Exception("No user is logged in");
+            }
+
+            // Find the existing expense by ID
+            var existingExpense = user.Transactions.FirstOrDefault(e => e.Id == updatedExpense.Id);
+
+            if (existingExpense == null)
+            {
+                throw new Exception("Expense not found");
+            }
+
+            // Adjust the available balance based on the changes
+            if (existingExpense.TransactionType == "Debit")
+            {
+                user.AvailableBalance += existingExpense.Amount; // Revert previous deduction
+            }
+            else if (existingExpense.TransactionType == "Credit" || existingExpense.TransactionType == "Debt")
+            {
+                user.AvailableBalance -= existingExpense.Amount; // Revert previous addition
+            }
+
+            // Update the existing expense with the new values
+            existingExpense.Description = updatedExpense.Description;
+            existingExpense.Amount = updatedExpense.Amount;
+            existingExpense.TransactionType = updatedExpense.TransactionType;
+            existingExpense.ExpenseTag = updatedExpense.ExpenseTag;
+            existingExpense.Note = updatedExpense.Note;
+            existingExpense.Date = updatedExpense.Date;
+
+            // Adjust the available balance based on the new values
+            if (updatedExpense.TransactionType == "Debit")
+            {
+                if (user.AvailableBalance < updatedExpense.Amount)
+                {
+                    throw new Exception("Insufficient balance to update the expense");
+                }
+                user.AvailableBalance -= updatedExpense.Amount; // Deduct new amount
+            }
+            else if (updatedExpense.TransactionType == "Credit" || updatedExpense.TransactionType == "Debt")
+            {
+                user.AvailableBalance += updatedExpense.Amount; // Add new amount
+            }
+
+            // Save changes to JSON
+            SaveUsersToJson();
+
+            return true; // Expense updated successfully
+        }
 
     }
+
+}

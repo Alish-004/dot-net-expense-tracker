@@ -8,7 +8,7 @@
     <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="d-flex align-items-center gap-2">
-            <button class="btn btn-outline-primary" @onclick="NavigateToHome">Back to Home</button>
+            <button class="btn btn-outline-primary" @onclick="NavigateToHome">  Back </button>
         </div>
         <h3 class="text-primary m-0 mx-auto">Manage Expenses</h3> <!-- Centered heading -->
     </div>
@@ -78,6 +78,8 @@
                     <th>Amount</th>
                     <th>Expense Type</th>
                     <th>Expense Tag</th>
+                    <th>Note</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -88,16 +90,36 @@
                         <tr>
                             <td>@expense.Date.ToString()</td>
                             <td>@expense.Description</td>
-                            <td>$@expense.Amount</td>
+                            <td>@currency @expense.Amount</td>
                             <td>@expense.TransactionType</td>
                             <td>@expense.ExpenseTag</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(expense.Note))
+                                {
+                                    <span>@expense.Note</span>
+                                }
+                                else
+                                {
+                                    <input type="text" class="form-control" placeholder="Add a note" @bind="expense.Note" />
+                                }
+                            </td>
+                            <td>
+                                @if (string.IsNullOrEmpty(expense.Note))
+                                {
+                                    <button class="btn btn-outline-primary btn-sm" @onclick="() => SaveNote(expense)">Save Note</button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-outline-secondary btn-sm" disabled>Note Saved</button>
+                                }
+                            </td>
                         </tr>
                     }
                 }
                 else
                 {
                     <tr>
-                        <td colspan="5" class="text-center">No expenses available.</td>
+                        <td colspan="7" class="text-center">No expenses available.</td>
                     </tr>
                 }
             </tbody>
@@ -116,11 +138,14 @@
     private DateTime? startDate;
     private DateTime? endDate;
     private string descriptionFilter;
+    private string currency;
 
     private bool isDateAscending = true; // Track the sort order
 
     protected override async Task OnInitializedAsync()
+
     {
+        currency = UserService.GetCurrency();
         try
         {
             expenses = UserService.GetUserExpenses();
@@ -193,14 +218,21 @@
         if (!string.IsNullOrWhiteSpace(descriptionFilter))
         {
             filteredExpenses = filteredExpenses
-                .Where(e => e.Description.Contains(descriptionFilter, StringComparison.OrdinalIgnoreCase))
+                // .Where(e => e.Description.Contains(descriptionFilter, StringComparison.OrdinalIgnoreCase))
+                .Where(e=> !string.IsNullOrEmpty(e.Description)&&
+                e.Description.Contains(descriptionFilter, StringComparison.OrdinalIgnoreCase))
                 .ToList();
         }
 
         // Filter by selected tag
         if (!string.IsNullOrEmpty(selectedTag))
         {
-            filteredExpenses = filteredExpenses.Where(e => e.ExpenseTag.Equals(selectedTag, StringComparison.OrdinalIgnoreCase)).ToList();
+            // filteredExpenses = filteredExpenses.Where(e => e.ExpenseTag.Equals(selectedTag, StringComparison.OrdinalIgnoreCase)).ToList();
+            filteredExpenses = filteredExpenses
+                // .Where(e => e.Description.Contains(descriptionFilter, StringComparison.OrdinalIgnoreCase))
+                .Where(e => !string.IsNullOrEmpty(e.ExpenseTag) &&
+                e.ExpenseTag.Contains(selectedTag, StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
     }
 
@@ -268,5 +300,11 @@
     private async Task NavigateToHome()
     {
         NavigationManager.NavigateTo("/home");
+    }
+
+    private void SaveNote(Transaction expense)
+    {
+        // Simulate saving the note (this should be replaced with actual save logic, e.g., via UserService)
+        Console.WriteLine($"Note for {expense.Description} saved: {expense.Note}");
     }
 }

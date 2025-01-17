@@ -13,7 +13,7 @@
         <div style="max-width: 900px; width: 100%;">
             <!-- Page Title -->
             <div style="margin-bottom: 20px;">
-                <h5 style="color: #007bff; font-size: 1.25rem;">Add Debt</h5>
+                <h5 style="color: #800080; font-size: 1.25rem;">Add Debt</h5>
             </div>
 
             <!-- Debt Form -->
@@ -43,7 +43,7 @@
                         <ValidationMessage For="@(() => NewDebt.Source)" />
                     </div>
 
-                    <button type="submit" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; width: 100%; margin-top: 20px;">
+                    <button type="submit" style="background-color: #800080; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; width: 100%; margin-top: 20px;">
                         Add Debt
                     </button>
                 </EditForm>
@@ -55,7 +55,7 @@
                 <div style="display: flex; align-items: center;">
                     <InputText id="new-source" class="form-control" @bind-Value="NewSource" placeholder="Enter source" style="margin-right: 10px;" />
                     <button style="background-color: #28a745; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px;" @onclick="HandleAddSource">
-                        Add Source
+                        Add
                     </button>
                 </div>
             </div>
@@ -72,7 +72,7 @@
 
             <!-- Debts Table -->
             <div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); margin-top: 30px;">
-                <h5 style="color: #007bff; font-size: 1.25rem; margin-bottom: 20px;">Debt List</h5>
+                <h5 style="color: #800080; font-size: 1.25rem; margin-bottom: 20px;">Debt List</h5>
                 <table class="table">
                     <thead>
                         <tr>
@@ -97,7 +97,7 @@
                                     @if (!debt.Paid)
                                     {
                                         <button @onclick="() => HandleMarkAsPaid(debt.Id)" class="btn btn-success">
-                                            Mark as Paid
+                                            Clear Debt
                                         </button>
                                     }
                                 </td>

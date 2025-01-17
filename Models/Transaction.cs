@@ -11,6 +11,8 @@ namespace coursework.Models
         public string ExpenseTag { get; set; }
 
         public string TransactionType { get; set; }
+
+        public string Note  { get; set; }
     }
 }
 

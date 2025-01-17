@@ -6,51 +6,52 @@
 @inject NavigationManager NavigationManager
 
 <NavMenu></NavMenu>
-<div class="container mt-4">
+<div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
+
             <!-- Balance Display -->
             <div class="mb-4 text-center">
-                <h3 class="text-primary">Balance: <span class="fw-bold">@balance</span></h3>
+                <h3 class="text-primary">Balance: <span class="fw-bold">@currency @balance</span></h3>
             </div>
 
             <!-- Add Expense Card -->
-            <div class="card shadow mb-4">
-                <div class="card-header bg-primary text-white">
+            <div class="card shadow-lg border-radius-10 mb-4">
+                <div class="card-header bg-gradient-purple text-white text-center py-3">
                     <h5 class="mb-0">Add Expense</h5>
                 </div>
                 <div class="card-body">
                     <EditForm Model="@NewExpense" OnValidSubmit="@HandleAddExpense">
-                        <div class="mb-3">
+                        <div class="form-group mb-3">
                             <label for="description" class="form-label fw-bold">Description</label>
-                            <InputText id="description" class="form-control" @bind-Value="NewExpense.Description" />
+                            <InputText id="description" class="form-control form-control-lg shadow-sm" @bind-Value="NewExpense.Description" />
                             @if (string.IsNullOrWhiteSpace(NewExpense.Description))
                             {
                                 <small class="text-danger">Description is required.</small>
                             }
                         </div>
 
-                        <div class="mb-3">
+                        <div class="form-group mb-3">
                             <label for="date" class="form-label fw-bold">Date</label>
-                            <InputDate id="date" class="form-control" @bind-Value="NewExpense.Date" />
+                            <InputDate id="date" class="form-control form-control-lg shadow-sm" @bind-Value="NewExpense.Date" />
                             @if (NewExpense.Date == default)
                             {
                                 <small class="text-danger">A valid date is required.</small>
                             }
                         </div>
 
-                        <div class="mb-3">
+                        <div class="form-group mb-3">
                             <label for="amount" class="form-label fw-bold">Amount</label>
-                            <InputNumber id="amount" class="form-control" @bind-Value="NewExpense.Amount" />
+                            <InputNumber id="amount" class="form-control form-control-lg shadow-sm" @bind-Value="NewExpense.Amount" />
                             @if (NewExpense.Amount <= 0)
                             {
                                 <small class="text-danger">Amount must be greater than zero.</small>
                             }
                         </div>
 
-                        <div class="mb-3">
+                        <div class="form-group mb-3">
                             <label for="expense-tag" class="form-label fw-bold">Tag</label>
-                            <InputSelect id="expense-tag" class="form-select" @bind-Value="NewExpense.ExpenseTag">
+                            <InputSelect id="expense-tag" class="form-control" @bind-Value="NewExpense.ExpenseTag">
                                 <option value="" disabled>Select a tag</option>
                                 @foreach (var tag in Tags)
                                 {
@@ -63,10 +64,12 @@
                             }
                         </div>
 
-                        <div class="mb-3">
-                            <label for="expense-type" class="form-label fw-bold">Expense Type</label>
-                            <InputSelect id="expense-type" class="form-select" @bind-Value="NewExpense.TransactionType">
-                                <option value="" disabled>Choose below</option>
+                        <div class="form-group mb-3">
+
+                            <label for="expense-type" style="display:block; margin-bottom:5px;">Expense Type</label>
+                            @* <label for="expense-type" class="form-label fw-bold">Expense Type</label> *@
+                            <InputSelect id="expense-type" class="form-control " @bind-Value="NewExpense.TransactionType">
+                                <option value="">Choose below</option>
                                 <option value="Credit">Credit</option>
                                 <option value="Debit">Debit</option>
                             </InputSelect>
@@ -76,20 +79,20 @@
                             }
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100" disabled="@IsInvalidForm">Add Expense</button>
+                        <button type="submit" class="btn btn-gradient-purple w-100" disabled="@IsInvalidForm">Add Expense</button>
                     </EditForm>
                 </div>
             </div>
 
             <!-- Add Custom Tag Card -->
-            <div class="card shadow">
-                <div class="card-header bg-success text-white">
+            <div class="card shadow-lg border-radius-10">
+                <div class="card-header bg-gradient-purple text-white text-center py-3">
                     <h6 class="mb-0">Add a Custom Tag</h6>
                 </div>
                 <div class="card-body">
                     <div class="input-group">
-                        <InputText id="new-tag" class="form-control" @bind-Value="NewTag" placeholder="Enter tag" />
-                        <button class="btn btn-success" @onclick="HandleAddTag">Add Tag</button>
+                        <InputText id="new-tag" class="form-control form-control-lg shadow-sm" @bind-Value="NewTag" placeholder="Enter tag" />
+                        <button class="btn btn-gradient-purple" @onclick="HandleAddTag">Add Tag</button>
                     </div>
                     @if (string.IsNullOrWhiteSpace(NewTag))
                     {
@@ -106,6 +109,7 @@
     private string balance = "0";
     private List<string> Tags = new();
     private string NewTag = string.Empty;
+    private string currency;
 
     protected override async Task OnInitializedAsync()
     {
@@ -114,6 +118,7 @@
         {
             balance = currentUser.AvailableBalance.ToString();
             Tags = UserService.GetAllTags();
+            currency = UserService.GetCurrency();
         }
     }
 
@@ -183,3 +188,55 @@
         string.IsNullOrWhiteSpace(NewExpense.ExpenseTag) ||
         string.IsNullOrWhiteSpace(NewExpense.TransactionType);
 }
+
+<style>
+    .card {
+        border-radius: 15px;
+    }
+
+    .bg-gradient-purple {
+        background: linear-gradient(to right, #9b4de2, #6a1d93);
+    }
+
+    .btn-gradient-purple {
+        background: linear-gradient(to right, #9b4de2, #6a1d93);
+        border: none;
+        color: white;
+    }
+
+        .btn-gradient-purple:hover {
+            background: linear-gradient(to left, #9b4de2, #6a1d93);
+        }
+
+    .shadow-sm {
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-control-lg {
+        padding: 1.25rem;
+        font-size: 1.25rem;
+        height: 50px;
+    }
+
+    .form-select-lg {
+        padding: 1.25rem;
+        font-size: 1.25rem;
+        height: 50px;
+    }
+
+    /* Ensure the selected value is clearly visible */
+    .form-select {
+        background-color: #f4f4f9;
+        color: #333;
+    }
+
+        .form-select option:checked {
+            background-color: #9b4de2;
+            color: white;
+        }
+
+        .form-select option {
+            background-color: #fff;
+            color: #333;
+        }
+</style>
